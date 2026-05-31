@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monte Carlo Financial Simulator - Final UX Edition</title>
+    
+    <!-- PyScript & Chart.js CDNs -->
+    <link rel="stylesheet" href="https://pyscript.net/releases/2024.1.1/core.css">
+    <script type="module" src="https://pyscript.net/releases/2024.1.1/core.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            --bg-color: #0d0d0d;
+            --panel-bg: #1a1a1a;
+            --accent-color: #00e676;
+            --accent-blue: #00b0ff;
+            --accent-red: #ff5252;
+            --text-main: #ffffff;
+            --text-dim: #a0a0a0;
+            --border-color: #333;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Inter', -apple-system, sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 20px;
+            width: 95%;
+            max-width: 1400px;
+            height: 90vh;
+            padding: 20px;
+        }
+
+        .input-panel {
+            background-color: var(--panel-bg);
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .input-panel h2 {
+            margin: 0;
+            color: var(--accent-color);
+            font-size: 1.4rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        .form-group { display: flex; flex-direction: column; gap: 5px; }
+        .form-group label { font-size: 0.8rem; color: var(--text-dim); }
+        .form-group input {
+            background: #252525;
+            border: 1px solid var(--border-color);
+            padding: 10px;
+            border-radius: 6px;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .btn-run {
+            background-color: var(--accent-color);
+            color: #000;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-reset {
+            background-color: transparent;
+            color: var(--accent-red);
+            border: 1px solid var(--accent-red);
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-run:hover { opacity: 0.9; transform: translateY(-1px); }
+        .btn-reset:hover { background-color: rgba(255, 82, 82, 0.1); }
+
+        .results-panel { display: grid; grid-template-rows: auto 1fr; gap: 20px; }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .metric-card {
+            background-color: var(--panel-bg);
+            padding: 15px;
+            border-radius: 12px;
+            border-left: 4px solid var(--border-color);
+            text-align: center;
+        }
+
+        .metric-card.worst { border-left-color: var(--accent-red); }
+        .metric-card.median { border-left-color: var(--accent-blue); }
+        .metric-card.best { border-left-color: var(--accent-color); }
+        .metric-value { font-size: 1.5rem; font-weight: bold; display: block; margin-top: 5px; }
+
+        .chart-area-wrapper {
+            background-color: var(--panel-bg);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            min-height: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @media (max-width: 1000px) {
+            .dashboard-container { grid-template-columns: 1fr; height: auto; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-container">
+        <aside class="input-panel">
+            <h2>Parameters</h2>
+            <div class="form-group"><label>Initial Investment ($)</label><input type="number" id="inputInitial" value=""></div>
+            <div class="form-group"><label>Monthly Contribution ($)</label><input type="number" id="inputMonthly" value=""></div>
+            <div class="form-group"><label>Expected Annual Return (%)</label><input type="number" id="inputReturn" value=""></div>
+            <div class="form-group"><label>Annual Volatility (%)</label><input type="number" id="inputVolatility" value=""></div>
+            <div class="form-group"><label>Investment Years</label><input type="number" id="inputYears" value=""></div>
+            
+            <div class="button-group">
+                <button class="btn-run" py-click="handle_simulation" id="runSimulationBtn">RUN SIMULATION</button>
+                <button class="btn-reset" py-click="handle_reset" id="resetBtn">RESET ALL</button>
+            </div>
+        </aside>
+
+        <main class="results-panel">
+            <section class="metrics-grid">
+                <div class="metric-card worst"><h3>10th (Worst)</h3><span class="metric-value" id="valP10">$0.00</span></div>
+                <div class="metric-card median"><h3>50th (Median)</h3><span class="metric-value" id="valP50">$0.00</span></div>
+                <div class="metric-card best"><h3>90th (Best)</h3><span class="metric-value" id="valP90">$0.00</span></div>
+            </section>
+            <section class="chart-area-wrapper">
+                <canvas id="chartArea"></canvas>
+            </section>
+        </main>
+    </div>
+
+    <!-- JavaScript for Chart Lifecycle Management -->
+    <script>
+        let myChart = null;
+
+        function renderSimulationChart(labels, p10Data, p50Data, p90Data) {
+            const ctx = document.getElementById('chartArea').getContext('2d');
+            if (myChart) { myChart.destroy(); }
+
+            myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: '90th Percentile', data: p90Data, borderColor: '#00e676', backgroundColor: 'rgba(0, 230, 118, 0.1)', fill: false, tension: 0.3, pointRadius: 0 },
+                        { label: '50th Percentile', data: p50Data, borderColor: '#00b0ff', backgroundColor: 'rgba(0, 176, 255, 0.1)', fill: false, tension: 0.3, pointRadius: 0 },
+                        { label: '10th Percentile', data: p10Data, borderColor: '#ff5252', backgroundColor: 'rgba(255, 82, 82, 0.1)', fill: false, tension: 0.3, pointRadius: 0 }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { grid: { color: '#333' }, ticks: { color: '#aaa', callback: v => '$' + v.toLocaleString() } },
+                        x: { grid: { color: '#333' }, ticks: { color: '#aaa', maxRotation: 0 } }
+                    },
+                    plugins: { legend: { labels: { color: '#fff', padding: 20 } } }
+                }
+            });
+        }
+
+        function clearChart() {
+            if (myChart) {
+                myChart.destroy();
+                myChart = null;
+            }
+        }
+    </script>
+
+    <!-- PyScript Logic -->
+    <script type="py">
+        from js import document, window
+        import random
+        import math
+
+        def run_simulation_logic():
+            initial = float(document.getElementById("inputInitial").value or 0)
+            monthly = float(document.getElementById("inputMonthly").value or 0)
+            ann_return = float(document.getElementById("inputReturn").value or 0) / 100
+            ann_vol = float(document.getElementById("inputVolatility").value or 0) / 100
+            years = int(document.getElementById("inputYears").value or 1)
+            
+            num_sims = 2000
+            months = years * 12
+            monthly_ret = ann_return / 12
+            monthly_vol = ann_vol / math.sqrt(12)
+
+            all_paths = []
+            for _ in range(num_sims):
+                path = [initial]
+                current = initial
+                for m in range(months):
+                    ret = random.gauss(monthly_ret, monthly_vol)
+                    current = (current + monthly) * (1 + ret)
+                    path.append(max(0, current))
+                all_paths.append(path)
+
+            p10_path, p50_path, p90_path = [], [], []
+            labels = [f"Y{i/12:.0f}" if i % 12 == 0 else "" for i in range(months + 1)]
+            
+            for m in range(months + 1):
+                month_values = sorted([sim[m] for sim in all_paths])
+                p10_path.append(round(month_values[int(num_sims * 0.10)], 2))
+                p50_path.append(round(month_values[int(num_sims * 0.50)], 2))
+                p90_path.append(round(month_values[int(num_sims * 0.90)], 2))
+
+            return labels, p10_path, p50_path, p90_path
+
+        def handle_simulation(event):
+            btn = document.getElementById("runSimulationBtn")
+            btn.innerText = "CALCULATING..."
+            
+            try:
+                labels, p10, p50, p90 = run_simulation_logic()
+                document.getElementById("valP10").innerText = f"${p10[-1]:,.2f}"
+                document.getElementById("valP50").innerText = f"${p50[-1]:,.2f}"
+                document.getElementById("valP90").innerText = f"${p90[-1]:,.2f}"
+                window.renderSimulationChart(labels, p10, p50, p90)
+            except Exception as e:
+                window.alert("Please fill all fields with valid numbers.")
+            
+            btn.innerText = "RUN SIMULATION"
+
+        def handle_reset(event):
+            # Clear Inputs
+            for field in ["inputInitial", "inputMonthly", "inputReturn", "inputVolatility", "inputYears"]:
+                document.getElementById(field).value = ""
+            
+            # Clear Outputs
+            for metric in ["valP10", "valP50", "valP90"]:
+                document.getElementById(metric).innerText = "$0.00"
+            
+            # Clear Chart via JS Bridge
+            window.clearChart()
+
+    </script>
+</body>
+</html>
