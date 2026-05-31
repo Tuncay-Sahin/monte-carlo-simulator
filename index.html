@@ -1,33 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- 1. Content Security Policy (CSP) -->
     <meta http-equiv="Content-Security-Policy" 
           content="default-src 'self'; 
-                   script-src 'self' 'unsafe-inline' https://pyscript.net https://cdn.jsdelivr.net; 
+                   script-src 'self' 'unsafe-inline' 'unsafe-eval' https://pyscript.net https://cdn.jsdelivr.net; 
                    style-src 'self' 'unsafe-inline' https://pyscript.net; 
                    img-src 'self' data:; 
-                   connect-src 'self' https://pyscript.net; 
+                   connect-src 'self' https://pyscript.net https://cdn.jsdelivr.net; 
                    object-src 'none';">
     
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Monte Carlo Financial Simulator - Final Build</title>
     
-    <!-- 2. Subresource Integrity (SRI) Assets -->
-    <link rel="stylesheet" 
-          href="https://pyscript.net/releases/2024.1.1/core.css" 
-          integrity="sha384-REv6X9O85mR3P87y4E7G7x8Q9R0S1T2U3V4W5X6Y7Z8A9B0C1D2E3F4G5H6I7J8" 
-          crossorigin="anonymous">
-
-    <script type="module" 
-            src="https://pyscript.net/releases/2024.1.1/core.js" 
-            integrity="sha384-KTEp3Kqj9tV04uD6m6I/V+Z7xGfI4YfXG9H0I1J2K3L4M5N6O7P8Q9R0S1T2U3V" 
-            crossorigin="anonymous"></script>
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js" 
-            integrity="sha384-7Lp8S6T6x9P4G9vF1U5D2E3F4G5H6I7J8K9L0M1N2O3P4Q5R6S7T8U9V0W1X2Y3Z" 
-            crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://pyscript.net/releases/2024.1.1/core.css">
+    <script type="module" src="https://pyscript.net/releases/2024.1.1/core.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 
     <style>
         :root {
@@ -156,7 +144,6 @@
 <body>
 
     <div class="dashboard-container">
-        <!-- Input Section -->
         <aside class="input-panel">
             <h2>Simulator Parameters</h2>
             <div class="form-group"><label>Initial Investment ($)</label><input type="number" id="inputInitial" min="0" required placeholder="0.00"></div>
@@ -173,7 +160,6 @@
             </div>
         </aside>
 
-        <!-- Output Section -->
         <main class="results-panel">
             <section class="metrics-grid">
                 <div class="metric-card worst"><h3>10th Percentile</h3><span class="metric-value" id="valP10">$0.00</span></div>
@@ -187,7 +173,6 @@
         </main>
     </div>
 
-    <!-- JavaScript Bridge -->
     <script>
         let myChart = null;
 
@@ -222,7 +207,6 @@
         }
     </script>
 
-    <!-- Python Engine -->
     <script type="py">
         from js import document, window
         import random
