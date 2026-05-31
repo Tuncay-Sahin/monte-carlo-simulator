@@ -1,3 +1,7 @@
+<div align="center">
+<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
+</div>
+
 # Hardened Client-Side Monte Carlo Financial Simulator
 
 An industry-grade, serverless quantitative finance simulator engineered with high-security standards. Bu proje, kullanıcı dostu trading-terminal stilinde bir arayüz ile geleceğe yönelik yatırım tahminleri yapmayı sağlayan ve tarayıcı tabanlı (Hardened Security Posture) zırhlandırılmış bir finansal simülasyon motorudur.
@@ -40,7 +44,8 @@ Proje, ham algoritma tasarımından güvenlik sıkılaştırmasına kadar **Goog
 3. **Phase 3 (Bridge):** Python motoru ile JavaScript dünyası PyScript köprüsüyle birleştirildi.
 4. **Phase 5 (UX Refinement):** Form resetleme, bellek yönetimi ve kullanıcı deneyimi optimize edildi.
 5. **Phase 6 (Hardening):** Güvenlik denetimi (*Security Audit*) işletilerek sistem güvenli hale getirildi.
-
+6. 
+---
 ### Faced Challenges & Trade-offs (Karşılaşılan Zorluklar)
 * **WASM vs. CSP Friction:** İlk güvenlik aşamasında katı bir CSP duvarı örüldüğü için PyScript'in WebAssembly tabanlı motoru tamamen engellendi ve sistem kilitlendi. Yapılan mimari analizle, kütüphanelerin WASM derleme gereksinimleri için `'unsafe-eval'` esnekliği tanınırken, iç kaledeki girdi filtreleri maksimum düzeye çıkarılarak risk optimize edildi (*Risk Acceptance*).
 * **AI SRI Hallucination:** Modelin ürettiği sahte SRI (Subresource Integrity) hash imzalarının tarayıcı tarafından reddedilmesi problemi, zafiyet analizi sırasında tespit edilerek kütüphane çağrıları pürüzsüzleştirildi.
@@ -48,3 +53,24 @@ Proje, ham algoritma tasarımından güvenlik sıkılaştırmasına kadar **Goog
 ---
 *Developed by Tuncay Şahin as a professional Business Analyst and Data Engineering Portfolio Project.*# monte-carlo-simulator
 A client-side Monte Carlo Financial Simulator built with Python, PyScript, and Chart.js. Sunucu bağımsız (Serverless) çalışan interaktif yatırım tahmin ve risk analiz motoru.
+
+```text
++-----------------------------------------------------------------------+
+|                    GOOGLE AI STUDIO & GEMINI FLOW                     |
++-----------------------------------------------------------------------+
+|                                                                       |
+|   [ Prompt 1: Core Engine ] ──> Python Monte Carlo Simulation Logic   |
+|                                     │                                 |
+|                                     ▼                                 |
+|   [ Prompt 2: Front-End ]   ──> Dark-Themed UI & Chart.js Enclosure   |
+|                                     │                                 |
+|                                     ▼                                 |
+|   [ Prompt 3: PyScript Bridge]─> Unified HTML + PyScript Engine       |
+|                                     │                                 |
+|                                     ▼                                 |
+|   [ Prompt 4: Hardening ]   ──> CSP Firewall + Strong Input Defense   |
+|                                                                       |
++-----------------------------------------------------------------------+
+|              NİHAİ ÜRÜN: SECURE & SERVERLESS APP (index.html)         |
++-----------------------------------------------------------------------+
+
