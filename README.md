@@ -2,6 +2,13 @@
 <img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
 </div>
 
+---
+
+*Developed by Tuncay Şahin as a professional Business Analyst and Data Engineering Portfolio Project.* **"monte-carlo-simulator**"
+A client-side Monte Carlo Financial Simulator built with Python, PyScript, and Chart.js. Sunucu bağımsız (Serverless) çalışan interaktif yatırım tahmin ve risk analiz motoru.
+
+---
+
 # Hardened Client-Side Monte Carlo Financial Simulator
 
 An industry-grade, serverless quantitative finance simulator engineered with high-security standards. Bu proje, kullanıcı dostu trading-terminal stilinde bir arayüz ile geleceğe yönelik yatırım tahminleri yapmayı sağlayan ve tarayıcı tabanlı (Hardened Security Posture) zırhlandırılmış bir finansal simülasyon motorudur.
@@ -44,15 +51,46 @@ Proje, ham algoritma tasarımından güvenlik sıkılaştırmasına kadar **Goog
 3. **Phase 3 (Bridge):** Python motoru ile JavaScript dünyası PyScript köprüsüyle birleştirildi.
 4. **Phase 5 (UX Refinement):** Form resetleme, bellek yönetimi ve kullanıcı deneyimi optimize edildi.
 5. **Phase 6 (Hardening):** Güvenlik denetimi (*Security Audit*) işletilerek sistem güvenli hale getirildi.
-6. 
 ---
+
 ### Faced Challenges & Trade-offs (Karşılaşılan Zorluklar)
 * **WASM vs. CSP Friction:** İlk güvenlik aşamasında katı bir CSP duvarı örüldüğü için PyScript'in WebAssembly tabanlı motoru tamamen engellendi ve sistem kilitlendi. Yapılan mimari analizle, kütüphanelerin WASM derleme gereksinimleri için `'unsafe-eval'` esnekliği tanınırken, iç kaledeki girdi filtreleri maksimum düzeye çıkarılarak risk optimize edildi (*Risk Acceptance*).
 * **AI SRI Hallucination:** Modelin ürettiği sahte SRI (Subresource Integrity) hash imzalarının tarayıcı tarafından reddedilmesi problemi, zafiyet analizi sırasında tespit edilerek kütüphane çağrıları pürüzsüzleştirildi.
 
 ---
-*Developed by Tuncay Şahin as a professional Business Analyst and Data Engineering Portfolio Project.*# monte-carlo-simulator
-A client-side Monte Carlo Financial Simulator built with Python, PyScript, and Chart.js. Sunucu bağımsız (Serverless) çalışan interaktif yatırım tahmin ve risk analiz motoru.
+
+## Financial User Guide & Interpretation Framework (Simülasyon Kılavuzu)
+
+### 1. Monte Carlo Simulation Nedir ve Ne İçin Kullanılır?
+Geleneksel finansal hesaplamalar (örneğin düz bileşik faiz formülleri) her yıl piyasaların sabit bir oranda büyüyeceğini varsayar. Ancak gerçek finans dünyası rasyonel ve doğrusal değildir; içerisinde yüksek oynaklık (*Volatility*) ve belirsizlik barındırır.
+
+Bu simülatör, gelecekteki yatırım sonuçlarını tek bir tahmine indirgemek yerine, piyasanın rastgele iniş çıkışlarını (**Geometric Brownian Motion** mantığına dayanan Gauss dağılımıyla) arka planda **2.000 farklı evrende** canlandırır. Amacı, yatırımcıya ve finansal analiste *"En iyi ihtimalle ne kazanabilirim?"* veya *"En kötü senaryoda riskim nedir?"* sorularının cevabını olasılıksal olarak vermektir.
+
+### 2. Girdi Parametreleri (Simulator Inputs) Ne Anlama Gelir?
+
+Simülasyona beslenen her veri, kantitatif modelin motorunu doğrudan şekillendirir:
+* **Initial Investment ($):** Yatırıma başlarken masaya koyulan ham sermaye (Anapara).
+* **Monthly Contribution ($):** Her ay disiplinli olarak portföye eklenecek olan nakit akışı. Bileşik getirinin uzun vadede kartopu etkisi yaratmasını sağlayan ana yakıttır.
+* **Expected Annual Return (%):** Portföyün (hisse senedi, fon, emtia vb.) tarihsel verilere dayanarak uzun vadede getirmesi beklenen ortalama yıllık brüt getiri oranı.
+* **Annual Volatility (%):** Piyasanın risk ve oynaklık derecesidir. Bu oran ne kadar yüksekse, simülasyon evrenlerindeki sapmalar o kadar radikal olur; grafik yelpazesi o kadar geniş açılır.
+* **Investment Years:** Yatırım ufku (Zaman boyutu). Zaman uzadıkça volatilite riski artsa da bileşik getirinin gücü baskın gelmeye başlar.
+
+---
+
+### 3. Sonuçlar ve Grafik Nasıl Analiz Edilir? (Output Interpretation)
+
+Simülasyon bittiğinde motor bize 2.000 farklı gelecek senaryosunu olasılık sırasına dizerek 3 kritik sınır gösterir:
+
+| Gösterge (Percentile) | Finansal Karşılığı (Market Scenario) | Analist Yorumu & Strateji |
+| :--- | :--- | :--- |
+| **10th Percentile (Worst Case)** | **Ayı Piyasası (Bear Market)** | Yatırım hayatınız boyunca krizler, yüksek enflasyon ve şanssız piyasa koşullarıyla karşılaştığınız senaryodur. Finansal planlama yaparken **"Risk Bütçenizi"** bu sayıya göre belirlemelisiniz. En kötü ihtimalle bile bu paranın size yetip yetmeyeceğini ölçersiniz. |
+| **50th Percentile (Median)** | **Rasyonel Beklenti (Baseline Scenario)** | 2.000 simülasyonun tam ortasındaki değerdir. Piyasaların ne çok uçtuğu ne de çöktüğü, tarihsel ortalamalara en yakın gerçekleşen rasyonel gelecektir. Finansal hedeflerinizi (emeklilik, ev alımı vb.) planlarken baz almanız gereken ana omurga bu değerdir. |
+| **90th Percentile (Best Case)** | **Boğa Piyasası (Bull Market)** | Ekonomik genişlemenin tepe noktada olduğu, yatırımlarınızın sürekli rüzgarı arkasına aldığı şanslı senaryodur. Bu sayıya bakıp aşırı iyimser (Overoptimistic) kararlar alınmamalı, sadece portföyün yukarı yönlü patlama potansiyeli (Upside potential) olarak görülmelidir. |
+
+#### Grafikteki Yelpaze Etkisi (Cone of Uncertainty)
+Grafiğe baktığınızda çizgilerin ilk yıllarda birbirine çok yakın olduğunu, ancak yıllar ilerledikçe (X ekseninde sağa doğru gidildikçe) aradaki makasın devasa açıldığını görürsünüz. Bu durum finans biliminde **"Cone of Uncertainty"** (Belirsizlik Konisi) olarak adlandırılır. Zaman ufku uzadıkça, gelecekteki olasılıkların ve risk dalgalanmalarının geometrik olarak arttığını gösterir. Bir iş analisti olarak bu grafik, yatırımcıya *"Zaman geçtikçe risk yönetiminin ve portföy çeşitlendirmenin (Diversification) önemi artar"* mesajını net bir şekilde verir.
+
+---
 
 ```text
 +-----------------------------------------------------------------------+
